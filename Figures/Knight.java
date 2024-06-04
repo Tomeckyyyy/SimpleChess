@@ -18,9 +18,14 @@ public class Knight extends Figure {
 
     @Override
     public List<MoveFigure> getPossibleMove() {
-
+        possibleMove.add(new MoveFigure(2,1,false,false));
+        possibleMove.add(new MoveFigure(1,2,false,false));
+        possibleMove.add(new MoveFigure(2,-1,false,false));
+        possibleMove.add(new MoveFigure(1,-2,false,false));
+        possibleMove.add(new MoveFigure(-1,2,false,false));
+        possibleMove.add(new MoveFigure(-2,1,false,false));
+        possibleMove.add(new MoveFigure(-1,-2,false,false));
+        possibleMove.add(new MoveFigure(-2,-1,false,false));
         return possibleMove;
     }
-    // TODO: zrobić get possible move w koniu
-
 }
