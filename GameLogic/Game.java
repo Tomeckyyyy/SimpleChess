@@ -14,15 +14,21 @@ public class Game {
         Board board = new Board();
         board.setPlaceOnBoard(0, 0, new King(0, 0, Color.WHITE));
         board.setPlaceOnBoard(0, 1, new Queen(0,1, Color.WHITE));
+        board.setPlaceOnBoard(3,3,new Queen(3,3,Color.WHITE));
+        board.setPlaceOnBoard(2,3, new Pawn(3,2, Color.WHITE));
+        board.setPlaceOnBoard(7,7, new Knight(7,7, Color.WHITE));
 //Sprawdza czy dobrze zrobiona jest lista possible move:
-        for (MoveFigure x : board.getPlaceChessBoard(0,1).getPossibleMove()){
-            System.out.println(x);
-        }
-        System.out.println(board.getPlaceChessBoard(0,0).getClass());
+//        for (MoveFigure x : board.getPlaceChessBoard(0,1).getPossibleMove()){
+//            System.out.println(x);
+//        }
+//        System.out.println(board.getPlaceChessBoard(0,0).getClass());
         while (!isCheckMate) {
-            moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,0,2,1), board);
+            moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,0,1,1), board);
             System.out.println(board);
-            moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,1,1,4), board);
+            moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,1,2,3), board);
+            System.out.println(board);
+            moveFigureOnChessBoardLogic(new MoveOnChessBoard(3,3,0,3), board);
+            moveFigureOnChessBoardLogic(new MoveOnChessBoard(7,7,5,6), board);
             System.out.println(board);
             isCheckMate = true;
         }

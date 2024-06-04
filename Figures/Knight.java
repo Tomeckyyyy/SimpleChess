@@ -21,5 +21,6 @@ public class Knight extends Figure {
 
         return possibleMove;
     }
+    // TODO: zrobić get possible move w koniu
 
 }
