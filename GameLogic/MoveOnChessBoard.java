@@ -1,6 +1,7 @@
 package GameLogic;
 
 import Figures.Figure;
+import Figures.King;
 import Figures.Knight;
 import Figures.MoveFigure;
 
@@ -19,6 +20,13 @@ public class MoveOnChessBoard {
     }
 
     public boolean isPossibleMove(Figure figure, Board board) {
+        // Sprawdzania czy jest próba bicia króla
+        if (board.getPlaceChessBoard(destinationX, destinationY) != null) {
+            if (board.getPlaceChessBoard(destinationX, destinationY).getClass() != King.class){
+                return false;
+            }
+        }
+        // Sprawdzanie czy
         for (MoveFigure potentialMove : figure.getPossibleMove()) {
             if (startX + potentialMove.getX() == destinationX && startY + potentialMove.getY() == destinationY) {
                 if (!this.isMoveThroughFigure(board)) {
@@ -28,7 +36,6 @@ public class MoveOnChessBoard {
         }
         return false;
     }
-    // przetestować czy ten koń działa
 
     private boolean isMoveThroughFigure(Board board) {
         if (board.getPlaceChessBoard(startX, startY).getClass() == Knight.class) {
