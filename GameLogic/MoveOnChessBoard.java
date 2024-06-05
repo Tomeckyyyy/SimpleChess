@@ -26,7 +26,7 @@ public class MoveOnChessBoard {
                 return false;
             }
         }
-        // Sprawdzanie czy
+        // Sprawdzanie czy taki ruch istnieje w ruchach potencjalnych, potem sprawdza czy figura przechodzi przez inną;
         for (MoveFigure potentialMove : figure.getPossibleMove()) {
             if (startX + potentialMove.getX() == destinationX && startY + potentialMove.getY() == destinationY) {
                 if (!this.isMoveThroughFigure(board)) {
@@ -42,14 +42,14 @@ public class MoveOnChessBoard {
             return false;
         } else if (startX == destinationX) {
             int step = (destinationY - startY) > 0 ? 1 : -1;
-            for (int y = startY - step; y != destinationY; y += step) {
+            for (int y = startY + step; y != destinationY; y += step) {
                 if (board.getPlaceChessBoard(startX, y) != null) {
                     return true;
                 }
             }
         } else if (startY == destinationY) {
             int step = (destinationX - startX) > 0 ? 1 : -1;
-            for (int x = startX - step; x != destinationX; x += step) {
+            for (int x = startX + step; x != destinationX; x += step) {
                 if (board.getPlaceChessBoard(x, startY) != null) {
                     return true;
                 }

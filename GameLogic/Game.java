@@ -36,32 +36,34 @@ public class Game {
             board.setPlaceOnBoard(6, i, new Pawn(6 ,i ,Color.BLACK));
         }
 
-        simpleChessGUI.gameRefreshGUI(board);
-
-        System.out.println(board.getPlaceChessBoard(0,0));
-        System.out.println(board);
-        board.setPlaceOnBoard(0, 1, new Queen(0,1, Color.WHITE));
-        board.setPlaceOnBoard(3,3,new Queen(3,3,Color.WHITE));
-        board.setPlaceOnBoard(2,3, new Pawn(2,3, Color.WHITE));
-        board.setPlaceOnBoard(7,7, new Knight(7,7, Color.WHITE));
         while (!isCheckMate(board, Color.WHITE) && !isCheckMate(board, Color.BLACK)) {
-            moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,0,1,1), board);
-            System.out.println(board);
-            moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,1,2,3), board);
-            System.out.println(board);
-            moveFigureOnChessBoardLogic(new MoveOnChessBoard(3,3,0,3), board);
-            moveFigureOnChessBoardLogic(new MoveOnChessBoard(7,7,5,6), board);
-            System.out.println(board);
-            simpleChessGUI.gameRefreshGUI(board);
-            break;
+            try {
+                moveFigureOnChessBoardLogic(new MoveOnChessBoard(1,4,3,4), board);
+                moveFigureOnChessBoardLogic(new MoveOnChessBoard(3,4,4,4), board);
+                moveFigureOnChessBoardLogic(new MoveOnChessBoard(4,4,5,4), board);
+                moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,4,4,4), board);
+                moveFigureOnChessBoardLogic(new MoveOnChessBoard(7,6,5,7), board);
+                System.out.println(board);
+                simpleChessGUI.gameRefreshGUI(board);
+            } catch (MoveException e){
+                e.printStackTrace();
+            }
+
+            break;  // wyłącznie do testów
         }
     }
 
-    public void moveFigureOnChessBoardLogic(MoveOnChessBoard moveOnChessBoard, Board board) {
+    public void moveFigureOnChessBoardLogic(MoveOnChessBoard moveOnChessBoard, Board board) throws MoveException {
         Figure figure = board.getPlaceChessBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY());
+        if (figure == null){
+            throw new MoveException("Próba przesunięcia nieistniejącej figury");
+        }
         if (moveOnChessBoard.isPossibleMove(figure, board)){
             board.setPlaceOnBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY(), null);
             board.setPlaceOnBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY(), figure);
+        }
+        else {
+            throw new MoveException("Ten ruch jest zabrioniony");
         }
     }
 

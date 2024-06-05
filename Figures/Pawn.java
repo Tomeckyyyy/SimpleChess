@@ -11,7 +11,7 @@ public class Pawn extends Figure {
 
     @Override
     public List<MoveFigure> getPossibleMove() {
-        if (this.getColor() == Color.BLACK) {
+        if (this.getColor() == Color.WHITE) {
             possibleMove.add(new MoveFigure(1, 0, false, false));
             possibleMove.add(new MoveFigure(2, 0, false, true));
             possibleMove.add(new MoveFigure(1, 1, true, false));
