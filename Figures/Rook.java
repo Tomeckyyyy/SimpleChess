@@ -22,7 +22,6 @@ public class Rook extends Figure {
 
     @Override
     public String toString() {
-        String s = "R" + (getColor() == Color.WHITE ? "w" : "b");
-        return s;
+        return "R" + (getColor() == Color.WHITE ? "w" : "b");
     }
 }

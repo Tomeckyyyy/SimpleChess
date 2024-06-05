@@ -11,16 +11,22 @@ public class Pawn extends Figure {
 
     @Override
     public List<MoveFigure> getPossibleMove() {
-        possibleMove.add(new MoveFigure(1,0, false,false));
-        possibleMove.add(new MoveFigure(2,0,false,true));
-        possibleMove.add(new MoveFigure(1,1,true,false));
-        possibleMove.add(new MoveFigure(1,-1,true,false));
+        if (this.getColor() == Color.BLACK) {
+            possibleMove.add(new MoveFigure(1, 0, false, false));
+            possibleMove.add(new MoveFigure(2, 0, false, true));
+            possibleMove.add(new MoveFigure(1, 1, true, false));
+            possibleMove.add(new MoveFigure(1, -1, true, false));
+        } else {
+            possibleMove.add(new MoveFigure(-1, 0, false, false));
+            possibleMove.add(new MoveFigure(-2, 0, false, true));
+            possibleMove.add(new MoveFigure(-1, 1, true, false));
+            possibleMove.add(new MoveFigure(-1, -1, true, false));
+        }
         return possibleMove;
     }
 
     @Override
     public String toString() {
-        String s = "P" + (getColor() == Color.WHITE ? "w" : "b");
-        return s;
+        return "P" + (getColor() == Color.WHITE ? "w" : "b");
     }
 }

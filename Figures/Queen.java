@@ -28,7 +28,6 @@ public class Queen extends Figure{
 
     @Override
     public String toString() {
-        String s = "Q" + (getColor() == Color.WHITE ? "w" : "b");
-        return s;
+        return "Q" + (getColor() == Color.WHITE ? "w" : "b");
     }
 }
