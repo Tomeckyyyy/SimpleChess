@@ -1,16 +1,85 @@
 package GUI;
 
+import GameLogic.Board;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
 public class SimpleChessGUI extends JFrame {
-    private JButton[][] chessBoardSquares = new JButton[8][8];
+    protected JButton[][] chessBoardSquares = new JButton[8][8];
     private JPanel chessBoard;
     private static final String[] columnNames = {"", "H", "G", "F", "E", "D", "C", "B", "A"};
 
     public SimpleChessGUI() {
         initializeGUI();
+    }
+
+    public void gameRefreshGUI(Board board) {
+        ImageIcon whitePawnIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
+        ImageIcon whiteRookIcon = new ImageIcon("src/GUI/img/white/Rook.png");
+        ImageIcon whiteBishopIcon = new ImageIcon("src/GUI/img/white/Bishop.png");
+        ImageIcon whiteKnightIcon = new ImageIcon("src/GUI/img/white/Knight.png");
+        ImageIcon whiteKingIcon = new ImageIcon("src/GUI/img/white/King.png");
+        ImageIcon whiteQueenIcon = new ImageIcon("src/GUI/img/white/Queen.png");
+        ImageIcon blackPawnIcon = new ImageIcon("src/GUI/img/black/Pawn.png");
+        ImageIcon blackRookIcon = new ImageIcon("src/GUI/img/black/Rook.png");
+        ImageIcon blackBishopIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
+        ImageIcon blackKnightIcon = new ImageIcon("src/GUI/img/black/Knight.png");
+        ImageIcon blackQueenIcon = new ImageIcon("src/GUI/img/black/Queen.png");
+        ImageIcon blackKingIcon = new ImageIcon("src/GUI/img/black/King.png");
+
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                if (board.getPlaceChessBoard(x, y) == null) {
+                    continue;
+                }
+                String figure = board.getPlaceChessBoard(x, y).toString();
+                if (figure.charAt(1) == 'w') {
+                    switch (figure.charAt(0)) {
+                        case 'R':
+                            chessBoardSquares[x][y].setIcon(whiteRookIcon);
+                            break;
+                        case 'K':
+                            chessBoardSquares[x][y].setIcon(whiteKnightIcon);
+                            break;
+                        case 'B':
+                            chessBoardSquares[x][y].setIcon(whiteBishopIcon);
+                            break;
+                        case '0':
+                            chessBoardSquares[x][y].setIcon(whiteKingIcon);
+                            break;
+                        case 'Q':
+                            chessBoardSquares[x][y].setIcon(whiteQueenIcon);
+                            break;
+                        case 'P':
+                            chessBoardSquares[x][y].setIcon(whitePawnIcon);
+                            break;
+                    }
+                } else {
+                    switch (figure.charAt(0)) {
+                        case 'R':
+                            chessBoardSquares[x][y].setIcon(blackRookIcon);
+                            break;
+                        case 'K':
+                            chessBoardSquares[x][y].setIcon(blackKnightIcon);
+                            break;
+                        case 'B':
+                            chessBoardSquares[x][y].setIcon(blackBishopIcon);
+                            break;
+                        case '0':
+                            chessBoardSquares[x][y].setIcon(blackKingIcon);
+                            break;
+                        case 'Q':
+                            chessBoardSquares[x][y].setIcon(blackQueenIcon);
+                            break;
+                        case 'P':
+                            chessBoardSquares[x][y].setIcon(blackPawnIcon);
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     private void initializeGUI() {
@@ -34,20 +103,6 @@ public class SimpleChessGUI extends JFrame {
         setJMenuBar(menuBar);
         setVisible(true);
 
-        ImageIcon whitePawnIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-        ImageIcon whiteRookIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-        ImageIcon whiteBishopIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-        ImageIcon whiteKnightIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-        ImageIcon whiteKingIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-        ImageIcon whiteQueenIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-
-        ImageIcon blackPawnIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-        ImageIcon blackRookIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-        ImageIcon blackBishopIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-        ImageIcon blackKnightIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-        ImageIcon blackQueenIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-        ImageIcon blackKingIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 9; j++) {
                 if (j == 0) {
@@ -60,38 +115,10 @@ public class SimpleChessGUI extends JFrame {
                     button.setFont(font);
                     button.setBackground(i % 2 == j % 2 ? new Color(24, 110, 64) : Color.WHITE);
                     chessBoardSquares[i][j - 1] = button;
-
-                    // Dodawanie Figur
-                    if (i == 0){
-                        if (j == 0) {
-                            button.setIcon(whiteRookIcon);
-                        } else if (j == 1){
-                            button.setIcon(whiteKnightIcon);
-                        } else if (j == 1){
-                            button.setIcon(whiteBishopIcon);
-                        } else if (j == 1){
-                            //button.setIcon(whiteIcon);
-                        } else if (j == 1){
-                            button.setIcon(whiteKnightIcon);
-                        } else if (j == 1){
-                            button.setIcon(whiteKnightIcon);
-                        }
-                    } else if (i == 7) {
-
-                    }
-                    // Dodawanie Pionków
-                    if (i == 1) {
-                        button.setIcon(whitePawnIcon);
-                    } else if (i == 6) {
-                        button.setIcon(blackPawnIcon);
-                    }
                     chessBoard.add(button);
                 }
             }
         }
-
-        // Pobiera źródło obrazku
-        System.out.println(chessBoardSquares[1][6].getIcon());
 
         for (int i = 0; i < 9; i++) {
             JLabel label = new JLabel(columnNames[i], JLabel.CENTER);
@@ -99,7 +126,6 @@ public class SimpleChessGUI extends JFrame {
         }
 
         add(chessBoard, BorderLayout.CENTER);
-
         setVisible(true);
     }
 }

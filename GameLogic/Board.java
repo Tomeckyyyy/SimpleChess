@@ -18,7 +18,7 @@ public class Board {
         StringBuilder consoleBoard = new StringBuilder();
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
-                consoleBoard.append("|").append((chessBoard[x][y] == null) ? " " : chessBoard[x][y]);
+                consoleBoard.append("|").append((chessBoard[x][y] == null) ? "  " : chessBoard[x][y]);
             }
             consoleBoard.append("| \n");
         }
