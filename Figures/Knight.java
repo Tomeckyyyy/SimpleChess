@@ -13,7 +13,8 @@ public class Knight extends Figure {
 
     @Override
     public String toString() {
-        return "K";
+        String s = "K" + (getColor() == Color.WHITE ? "w" : "b");
+        return s;
     }
 
     @Override

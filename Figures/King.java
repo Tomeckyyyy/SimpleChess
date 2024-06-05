@@ -25,6 +25,7 @@ public class King extends Figure {
 
     @Override
     public String toString() {
-        return "0";
+        String s = "0" + (getColor() == Color.WHITE ? "w" : "b");
+        return s;
     }
 }

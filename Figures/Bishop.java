@@ -22,6 +22,7 @@ public class Bishop extends Figure {
 
     @Override
     public String toString() {
-        return "B";
+        String s = "B" + (getColor() == Color.WHITE ? "w" : "b");
+        return s;
     }
 }

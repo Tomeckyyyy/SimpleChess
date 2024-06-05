@@ -20,6 +20,7 @@ public class Pawn extends Figure {
 
     @Override
     public String toString() {
-        return "P";
+        String s = "P" + (getColor() == Color.WHITE ? "w" : "b");
+        return s;
     }
 }
