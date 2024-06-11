@@ -35,6 +35,8 @@ public class Game {
             board.setPlaceOnBoard(6, i, new Pawn(6 ,i ,Color.BLACK));
         }
 
+        // TODO: Testowanie matowania.
+        // TODO: Zmiana osób na ruchu.
         while (!isCheckMate(board, Color.WHITE) && !isCheckMate(board, Color.BLACK)) {
             try {
                 moveFigureOnChessBoardLogic(new MoveOnChessBoard(1,4,3,4), board);
@@ -73,15 +75,14 @@ public class Game {
 
     // Sprawdza czy jest MAT
     private boolean isCheckMate(Board board, Color color){
-        int[] kingCoordinates = lookForKing(color);
-        assert kingCoordinates != null;
-        Figure king = board.getPlaceChessBoard(kingCoordinates[0], kingCoordinates[1]);
+        assert lookForKing(color) != null;
+        Figure king = lookForKing(color);
         List<int[]> bannedFields = getBannedFields();
-
         for (int[] bannedCoordinates : bannedFields) {
             if (king.getCurrentX() == bannedCoordinates[0] && king.getCurrentY() == bannedCoordinates[1]){ // Sprawdza czy jest szach
                 if (!isKingHaveLegalMove(king, board, bannedFields)){
-                    // Tutaj jeszcze trzeba zrobić to czy nie da sie zasłonić
+                    // TODO: Sprawdzanie czy da się zasłonić króla
+                    System.out.println("MAMY MATA dla króla:" + color);
                     return true;
                 }
             }
@@ -121,15 +122,12 @@ public class Game {
         }
         return false;
     }
-    // Zmiany : Usuwanie z figur w grze, zbitej figury; matowanie
-
-    // TODO: Sprawdzanie czy jest mat
 
     // Sprawdzenie kooordynatów króla
-    private int[] lookForKing(Color color){
+    private Figure lookForKing(Color color){
         for (Figure figure : figureInPlay) {
             if (figure.getClass() == King.class && figure.getColor() == color) {
-                return new int[]{figure.getCurrentX(), figure.getCurrentY()};
+                return figure;
             }
         }
         return null;
