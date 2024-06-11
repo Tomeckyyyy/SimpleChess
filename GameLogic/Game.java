@@ -8,7 +8,6 @@ import java.util.List;
 
 public class Game {
     static List<Figure> figureInPlay = new ArrayList<>();
-    static List<Figure> figureOutOfGame = new ArrayList<>();
 
 
     public Game(SimpleChessGUI simpleChessGUI) {
@@ -59,47 +58,91 @@ public class Game {
             throw new MoveException("Próba przesunięcia nieistniejącej figury");
         }
         if (moveOnChessBoard.isPossibleMove(figure, board)){
+            Figure potentialKickedFigure = board.getPlaceChessBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY());
+            if (potentialKickedFigure != null){
+                figureInPlay.remove(potentialKickedFigure);      // Usuwanie z figur w grze, zbitej figury
+            }
             board.setPlaceOnBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY(), null);
             board.setPlaceOnBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY(), figure);
         }
         else {
             throw new MoveException("Ten ruch jest zabrioniony");
         }
+        changeFigureInPlay(board);
     }
 
     // Sprawdza czy jest MAT
     private boolean isCheckMate(Board board, Color color){
-        int[] king = lookForKing(board, color);
-        assert king != null;
-        for (MoveFigure potentialMove : board.getPlaceChessBoard(king[0], king[1]).getPossibleMove()){
-            continue;
+        int[] kingCoordinates = lookForKing(color);
+        assert kingCoordinates != null;
+        Figure king = board.getPlaceChessBoard(kingCoordinates[0], kingCoordinates[1]);
+        List<int[]> bannedFields = getBannedFields();
+
+        for (int[] bannedCoordinates : bannedFields) {
+            if (king.getCurrentX() == bannedCoordinates[0] && king.getCurrentY() == bannedCoordinates[1]){ // Sprawdza czy jest szach
+                if (!isKingHaveLegalMove(king, board, bannedFields)){
+                    // Tutaj jeszcze trzeba zrobić to czy nie da sie zasłonić
+                    return true;
+                }
+            }
         }
         return false;
     }
 
+    private List<int[]> getBannedFields(){
+        List<int[]> bannedFields = new ArrayList<>();
+        for (Figure figure : figureInPlay){
+            for (MoveFigure potentialMove : figure.getPossibleMove()){
+                int bannedX = figure.getCurrentX() + potentialMove.getX();
+                int bannedY = figure.getCurrentY() + potentialMove.getY();
+                bannedFields.add(new int[]{bannedX, bannedY});
+            }
+        }
+        return bannedFields;
+    }
+
+    private boolean isKingHaveLegalMove(Figure king, Board board, List<int[]> bannedFields){
+        for (MoveFigure potentialMove : king.getPossibleMove()) {
+            int destinationX = king.getCurrentX() + potentialMove.getX();
+            int destinationY = king.getCurrentY() + potentialMove.getY();
+            boolean wasBreak = false;
+            for (int[] bannedField : bannedFields){
+                if (bannedField[0] == potentialMove.getX() && bannedField[1] == potentialMove.getY()){
+                    wasBreak = true;
+                    break;
+                }
+            }
+            if (wasBreak) {
+                continue;
+            }
+            if (board.getPlaceChessBoard(destinationX, destinationY) == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // Zmiany : Usuwanie z figur w grze, zbitej figury; matowanie
+
+    // TODO: Sprawdzanie czy jest mat
+
     // Sprawdzenie kooordynatów króla
-    private int[] lookForKing(Board board, Color color){
-        for (int x = 0; x < 8; x++){
-            for (int y = 0; y < 8; y++){
-                Figure figure = board.getPlaceChessBoard(x,y);
-                int[] coordinates = {x,y};
-                if (figure == null){
-                    continue;
-                }
-                if (figure.getClass() == King.class && figure.getColor() == color){
-                    return coordinates;
-                }
+    private int[] lookForKing(Color color){
+        for (Figure figure : figureInPlay) {
+            if (figure.getClass() == King.class && figure.getColor() == color) {
+                return new int[]{figure.getCurrentX(), figure.getCurrentY()};
             }
         }
         return null;
     }
 
-    public List<Figure> getFigureInPlay() {
-        return figureInPlay;
+    private void changeFigureInPlay(Board board){
+        for (int x = 0; x < 8; x++){
+            for (int y = 0; y < 8; y++){
+                Figure figure = board.getPlaceChessBoard(x,y);
+                if (figure != null){
+                    figureInPlay.add(figure);
+                }
+            }
+        }
     }
-
-    public List<Figure> getFigureOutOfGame() {
-        return figureOutOfGame;
-    }
-
 }

@@ -30,6 +30,8 @@ public class MoveOnChessBoard {
         for (MoveFigure potentialMove : figure.getPossibleMove()) {
             if (startX + potentialMove.getX() == destinationX && startY + potentialMove.getY() == destinationY) {
                 if (!this.isMoveThroughFigure(board)) {
+                    figure.setCurrentX(destinationX);
+                    figure.setCurrentY(destinationY);
                     return true;
                 }
             }

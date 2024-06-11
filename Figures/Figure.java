@@ -4,25 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Figure {
-    private final int startX;
-    private final int startY;
+    private int currentX;
+    private int currentY;
     private final Color color;
     List<MoveFigure> possibleMove = new ArrayList<>();
 
     public Figure(int startX, int startY, Color color){
-        this.startX = startX;
-        this.startY = startY;
+        this.currentX = startX;
+        this.currentY = startY;
         this.color = color;
     }
 
     public abstract List<MoveFigure> getPossibleMove();
 
-    public int getStartX(){
-        return startX;
+    public int getCurrentX(){
+        return currentX;
     }
-    public int getStartY(){
-        return startY;
+    public int getCurrentY(){
+        return currentY;
     }
+
+    public void setCurrentX(int currentX) {
+        this.currentX = currentX;
+    }
+
+    public void setCurrentY(int currentY) {
+        this.currentY = currentY;
+    }
+
     public Color getColor() {
         return color;
     }
