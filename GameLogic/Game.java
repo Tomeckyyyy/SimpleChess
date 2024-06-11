@@ -1,17 +1,18 @@
 package GameLogic;
 
 import Figures.*;
+import GUI.MoveListener;
 import GUI.SimpleChessGUI;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    static List<Figure> figureInPlay = new ArrayList<>();
+    private static List<Figure> figureInPlay = new ArrayList<>();
+    private final Board board = new Board();
 
 
     public Game(SimpleChessGUI simpleChessGUI) {
-        Board board = new Board();
         board.setPlaceOnBoard(0, 3, new King(0, 3, Color.WHITE));
         board.setPlaceOnBoard(0,0, new Rook(0,0, Color.WHITE));
         board.setPlaceOnBoard(0,1, new Knight(0,1, Color.WHITE));
@@ -39,12 +40,12 @@ public class Game {
         // TODO: Zmiana osób na ruchu.
         while (!isCheckMate(board, Color.WHITE) && !isCheckMate(board, Color.BLACK)) {
             try {
-                moveFigureOnChessBoardLogic(new MoveOnChessBoard(1,4,3,4), board);
-                moveFigureOnChessBoardLogic(new MoveOnChessBoard(3,4,4,4), board);
-                moveFigureOnChessBoardLogic(new MoveOnChessBoard(4,4,5,4), board);
-                moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,4,4,4), board);
-                moveFigureOnChessBoardLogic(new MoveOnChessBoard(7,6,5,7), board);
-                System.out.println(board);
+                moveFigureOnChessBoardLogic(new MoveOnChessBoard(1,4,3,4));
+//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(3,4,4,4));
+//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(4,4,5,4));
+//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,4,4,4));
+//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(7,6,5,7));
+//                System.out.println(board);
                 simpleChessGUI.gameRefreshGUI(board);
             } catch (MoveException e){
                 e.printStackTrace();
@@ -54,7 +55,7 @@ public class Game {
         }
     }
 
-    public void moveFigureOnChessBoardLogic(MoveOnChessBoard moveOnChessBoard, Board board) throws MoveException {
+    public void moveFigureOnChessBoardLogic(MoveOnChessBoard moveOnChessBoard) throws MoveException {
         Figure figure = board.getPlaceChessBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY());
         if (figure == null){
             throw new MoveException("Próba przesunięcia nieistniejącej figury");

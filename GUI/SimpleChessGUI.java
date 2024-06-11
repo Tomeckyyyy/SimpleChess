@@ -4,11 +4,9 @@ import GameLogic.Board;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 public class SimpleChessGUI extends JFrame {
     protected JButton[][] chessBoardSquares = new JButton[8][8];
-    private JPanel chessBoard;
     private static final String[] columnNames = {"", "H", "G", "F", "E", "D", "C", "B", "A"};
 
     public SimpleChessGUI() {
@@ -88,7 +86,7 @@ public class SimpleChessGUI extends JFrame {
         setSize(800, 800);
         setLayout(new BorderLayout());
 
-        chessBoard = new JPanel(new GridLayout(0, 9));
+        JPanel chessBoard = new JPanel(new GridLayout(0, 9));
         chessBoard.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         chessBoard.setBackground(new Color(197, 197, 106));
         Font font = new Font("Sans-serif", Font.PLAIN, 60);
@@ -111,7 +109,7 @@ public class SimpleChessGUI extends JFrame {
                     label.setVerticalAlignment(JLabel.CENTER);
                     chessBoard.add(label);
                 } else {
-                    JButton button = new JButton();
+                    ButtonField button = new ButtonField(this, i, j);
                     button.setFont(font);
                     button.setBackground(i % 2 == j % 2 ? new Color(24, 110, 64) : Color.WHITE);
                     chessBoardSquares[i][j - 1] = button;
