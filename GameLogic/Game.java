@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    public static final int queue = 0;
     private static final List<Figure> figureInPlay = new ArrayList<>();
     private final Board board = new Board();
 
