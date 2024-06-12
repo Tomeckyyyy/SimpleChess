@@ -1,9 +1,16 @@
 package GUI;
 
 import GameLogic.Board;
+import GameLogic.Game;
+import GameLogic.MoveOnChessBoard;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class SimpleChessGUI extends JFrame {
     protected JButton[][] chessBoardSquares = new JButton[8][8];
@@ -96,11 +103,75 @@ public class SimpleChessGUI extends JFrame {
         JMenu fileMenu = new JMenu("File");
         JMenu gameMenu = new JMenu("Game");
         JMenu helpMenu = new JMenu("Help");
+        JMenuItem loadGame = new JMenuItem("Load Game");
+        JMenuItem saveGame = new JMenuItem("Save Game");
+        fileMenu.add(loadGame);
+        fileMenu.add(saveGame);
+        JMenuItem newGame = new JMenuItem("New Game");
+        gameMenu.add(newGame);
+        JMenuItem rules = new JMenuItem("Rules");
+        JMenuItem gitHub = new JMenuItem("Project GitHub");
+        helpMenu.add(rules);
+        helpMenu.add(gitHub);
+
         menuBar.add(fileMenu);
         menuBar.add(gameMenu);
         menuBar.add(helpMenu);
         setJMenuBar(menuBar);
         setVisible(true);
+
+        loadGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Load Game from \"Movements\" file");
+                try (BufferedReader br = new BufferedReader(new FileReader("Movements.txt"))) {
+                    while (br.readLine() != null){
+                        String line = br.readLine();
+                    }
+                } catch (IOException m) {
+                    JOptionPane.showMessageDialog(null, "Nie udało się odczytać pliku");
+                    System.out.println(m);
+                }
+            }
+        });
+        saveGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Save Game to \"Movements\" file");
+//                try (BufferedWriter br = new BufferedWriter(new FileWriter("Movements.txt"))) {
+//                    for (MoveOnChessBoard x : ) {
+//                        String line = name + "/" + species + "/" + age + "\n";
+//                        br.write(line);
+//                    }
+//                } catch (IOException m) {
+//                    JOptionPane.showMessageDialog(null, "Nie udało się zapisać do pliku");
+//                    System.out.println(m);
+//                }
+            }
+        });
+
+        newGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "New Game");
+                new Game(new SimpleChessGUI());
+            }
+        });
+
+        rules.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLink("https://en.wikipedia.org/wiki/Rules_of_chess");
+            }
+        });
+
+        gitHub.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLink("https://github.com/Tomeckyyyy/SimpleChess");
+            }
+        });
+
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 9; j++) {
@@ -126,5 +197,22 @@ public class SimpleChessGUI extends JFrame {
 
         add(chessBoard, BorderLayout.CENTER);
         setVisible(true);
+    }
+
+    private void openLink(String url) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(new URI(url));
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void showError(String message){
+        JOptionPane.showMessageDialog(null, message);
     }
 }
