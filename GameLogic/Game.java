@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    private static List<Figure> figureInPlay = new ArrayList<>();
+    public static final int queue = 0;
+    private static final List<Figure> figureInPlay = new ArrayList<>();
     private final Board board = new Board();
 
 
@@ -35,32 +36,50 @@ public class Game {
             board.setPlaceOnBoard(1, i, new Pawn(1 ,i ,Color.WHITE));
             board.setPlaceOnBoard(6, i, new Pawn(6 ,i ,Color.BLACK));
         }
+        simpleChessGUI.gameRefreshGUI(board);
 
         // TODO: Testowanie matowania.
         // TODO: Zmiana osób na ruchu.
-        while (!isCheckMate(board, Color.WHITE) && !isCheckMate(board, Color.BLACK)) {
-            try {
-                moveFigureOnChessBoardLogic(new MoveOnChessBoard(1,4,3,4));
-//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(3,4,4,4));
-//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(4,4,5,4));
-//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(0,4,4,4));
-//                moveFigureOnChessBoardLogic(new MoveOnChessBoard(7,6,5,7));
-//                System.out.println(board);
-                simpleChessGUI.gameRefreshGUI(board);
-            } catch (MoveException e){
-                e.printStackTrace();
-            }
 
-            break;  // wyłącznie do testów
+
+        Color colorOnMove = Color.WHITE;
+        while (!isCheckMate(board, Color.WHITE) && !isCheckMate(board, Color.BLACK)) {
+            waitForMove(colorOnMove);
+            simpleChessGUI.gameRefreshGUI(board);
         }
     }
 
-    public void moveFigureOnChessBoardLogic(MoveOnChessBoard moveOnChessBoard) throws MoveException {
+    private void waitForMove(Color colorOnMove){
+        while (MoveListener.isMoveListenerComplete()) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            oneMove(colorOnMove);
+            colorOnMove = colorOnMove.next();
+        }
+    }
+
+    private synchronized void oneMove(Color color) {
+        if (MoveListener.isMoveListenerComplete()) {
+            try {
+                moveFigureOnChessBoardLogic(MoveListener.moveListener(), color);
+            } catch (MoveException e) {
+                e.printStackTrace();
+            }
+        }
+        MoveListener.clearListener();
+    }
+
+
+    public void moveFigureOnChessBoardLogic(MoveOnChessBoard moveOnChessBoard, Color color) throws MoveException {
         Figure figure = board.getPlaceChessBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY());
         if (figure == null){
             throw new MoveException("Próba przesunięcia nieistniejącej figury");
-        }
-        if (moveOnChessBoard.isPossibleMove(figure, board)){
+        } else if (figure.getColor() != color) {
+            throw new MoveException("Próba przesunięcia nie swojej figury");
+        } else if (moveOnChessBoard.isPossibleMove(figure, board)){
             Figure potentialKickedFigure = board.getPlaceChessBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY());
             if (potentialKickedFigure != null){
                 figureInPlay.remove(potentialKickedFigure);      // Usuwanie z figur w grze, zbitej figury
@@ -78,7 +97,7 @@ public class Game {
     private boolean isCheckMate(Board board, Color color){
         assert lookForKing(color) != null;
         Figure king = lookForKing(color);
-        List<int[]> bannedFields = getBannedFields();
+        List<int[]> bannedFields = getBannedFields(color.next());
         for (int[] bannedCoordinates : bannedFields) {
             if (king.getCurrentX() == bannedCoordinates[0] && king.getCurrentY() == bannedCoordinates[1]){ // Sprawdza czy jest szach
                 if (!isKingHaveLegalMove(king, board, bannedFields)){
@@ -91,13 +110,15 @@ public class Game {
         return false;
     }
 
-    private List<int[]> getBannedFields(){
+    private List<int[]> getBannedFields(Color color){
         List<int[]> bannedFields = new ArrayList<>();
         for (Figure figure : figureInPlay){
-            for (MoveFigure potentialMove : figure.getPossibleMove()){
-                int bannedX = figure.getCurrentX() + potentialMove.getX();
-                int bannedY = figure.getCurrentY() + potentialMove.getY();
-                bannedFields.add(new int[]{bannedX, bannedY});
+            if (figure.getColor() == color){
+                for (MoveFigure potentialMove : figure.getPossibleMove()) {
+                    int bannedX = figure.getCurrentX() + potentialMove.getX();
+                    int bannedY = figure.getCurrentY() + potentialMove.getY();
+                    bannedFields.add(new int[]{bannedX, bannedY});
+                }
             }
         }
         return bannedFields;

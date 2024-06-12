@@ -30,6 +30,7 @@ public class SimpleChessGUI extends JFrame {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 if (board.getPlaceChessBoard(x, y) == null) {
+                    chessBoardSquares[x][y].setIcon(null);
                     continue;
                 }
                 String figure = board.getPlaceChessBoard(x, y).toString();
@@ -109,7 +110,7 @@ public class SimpleChessGUI extends JFrame {
                     label.setVerticalAlignment(JLabel.CENTER);
                     chessBoard.add(label);
                 } else {
-                    ButtonField button = new ButtonField(this, i, j);
+                    ButtonField button = new ButtonField(i, j - 1);
                     button.setFont(font);
                     button.setBackground(i % 2 == j % 2 ? new Color(24, 110, 64) : Color.WHITE);
                     chessBoardSquares[i][j - 1] = button;
