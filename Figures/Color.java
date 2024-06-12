@@ -1,5 +1,9 @@
 package Figures;
 
 public enum Color {
-    BLACK, WHITE, KILLED;
+    BLACK, WHITE;
+
+    public Color next() {
+        return this == WHITE ? BLACK : WHITE;
+    }
 }
