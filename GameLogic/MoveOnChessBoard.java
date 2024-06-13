@@ -35,9 +35,6 @@ public class MoveOnChessBoard {
                     return false;
                 }
                 if (!this.isMoveThroughFigure(board)) {
-                    figure.setCurrentX(destinationX);
-                    figure.setCurrentY(destinationY);
-                    figure.setMoved(true);
                     return true;
                 }
             }

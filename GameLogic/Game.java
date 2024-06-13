@@ -38,33 +38,35 @@ public class Game {
         simpleChessGUI.gameRefreshGUI(board);
 
         // TODO: Testowanie matowania.
-        // TODO: Zmiana osób na ruchu.
-
+        // TODO: Zrobienie wiadomości po angielsku      moveFigureOnChessBoardLogic
 
         Color colorOnMove = Color.WHITE;
         while (!isCheckMate(board, Color.WHITE) && !isCheckMate(board, Color.BLACK)) {
             waitForMove(colorOnMove);
+            colorOnMove = colorOnMove.next();
+            System.out.println(colorOnMove);
             simpleChessGUI.gameRefreshGUI(board);
         }
     }
 
     private void waitForMove(Color colorOnMove){
-        while (MoveListener.isMoveListenerComplete()) {
+        while (!MoveListener.isMoveListenerComplete()) {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            oneMove(colorOnMove);
-            colorOnMove = colorOnMove.next();
         }
+        oneMove(colorOnMove);
     }
 
-    private synchronized void oneMove(Color color) {
+    private void oneMove(Color color) {
         if (MoveListener.isMoveListenerComplete()) {
             try {
                 moveFigureOnChessBoardLogic(MoveListener.moveListener(), color);
             } catch (MoveException e) {
+                MoveListener.clearListener();
+                waitForMove(color);
                 e.printStackTrace();
             }
         }
@@ -85,6 +87,9 @@ public class Game {
             }
             board.setPlaceOnBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY(), null);
             board.setPlaceOnBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY(), figure);
+            figure.setCurrentX(moveOnChessBoard.getDestinationX());
+            figure.setCurrentY(moveOnChessBoard.getDestinationY());
+            figure.setMoved(true);
         }
         else {
             throw new MoveException("Ten ruch jest zabrioniony");
@@ -101,7 +106,7 @@ public class Game {
             if (king.getCurrentX() == bannedCoordinates[0] && king.getCurrentY() == bannedCoordinates[1]){ // Sprawdza czy jest szach
                 if (!isKingHaveLegalMove(king, board, bannedFields)){
                     // TODO: Sprawdzanie czy da się zasłonić króla
-                    System.out.println("MAMY MATA dla króla:" + color);
+                    SimpleChessGUI.showError("MAMY MATA dla króla:" + color);
                     return true;
                 }
             }
@@ -116,7 +121,13 @@ public class Game {
                 for (MoveFigure potentialMove : figure.getPossibleMove()) {
                     int bannedX = figure.getCurrentX() + potentialMove.getX();
                     int bannedY = figure.getCurrentY() + potentialMove.getY();
-                    bannedFields.add(new int[]{bannedX, bannedY});
+                    MoveOnChessBoard move = new MoveOnChessBoard(figure.getCurrentX(), figure.getCurrentY(), bannedX, bannedY);
+
+                    // wyrzuca błędy
+
+//                    if (move.isPossibleMove(figure, board)){
+//                        bannedFields.add(new int[]{bannedX, bannedY});
+//                    }
                 }
             }
         }
