@@ -22,7 +22,9 @@ public class MoveOnChessBoard {
     public boolean isPossibleMove(Figure figure, Board board) {
         // Sprawdzania czy jest próba bicia króla
         if (board.getPlaceChessBoard(destinationX, destinationY) != null) {
-            if (board.getPlaceChessBoard(destinationX, destinationY).getClass() != King.class){
+            if (board.getPlaceChessBoard(destinationX, destinationY).getClass() == King.class){
+                return false;
+            } else if (figure.getColor() == board.getPlaceChessBoard(destinationX, destinationY).getColor()) {
                 return false;
             }
         }
@@ -36,6 +38,8 @@ public class MoveOnChessBoard {
                 }
                 if (!this.isMoveThroughFigure(board)) {
                     return true;
+                } else {
+                    break;
                 }
             }
         }
@@ -62,10 +66,14 @@ public class MoveOnChessBoard {
         } else if (Math.abs(destinationX - startX) == Math.abs(destinationY - startY)) {
             int stepX = (destinationX - startX) > 0 ? 1 : -1;
             int stepY = (destinationY - startY) > 0 ? 1 : -1;
-            for (int i = 1; i != destinationX; i++) {
-                if (board.getPlaceChessBoard(startX + stepX, startY + stepY) != null) {
+            int x = startX + stepX;
+            int y = startY + stepY;
+            while (x != destinationX && y != destinationY) {
+                if (board.getPlaceChessBoard(x, y) != null) {
                     return true;
                 }
+                x += stepX;
+                y += stepY;
             }
         }
         return false;

@@ -81,10 +81,6 @@ public class Game {
         } else if (figure.getColor() != color) {
             throw new MoveException("Próba przesunięcia nie swojej figury");
         } else if (moveOnChessBoard.isPossibleMove(figure, board)){
-            Figure potentialKickedFigure = board.getPlaceChessBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY());
-            if (potentialKickedFigure != null){
-                figureInPlay.remove(potentialKickedFigure);      // Usuwanie z figur w grze, zbitej figury
-            }
             board.setPlaceOnBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY(), null);
             board.setPlaceOnBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY(), figure);
             figure.setCurrentX(moveOnChessBoard.getDestinationX());
