@@ -181,7 +181,8 @@ public class Game {
                         continue;
                     }
                     MoveOnChessBoard move = new MoveOnChessBoard(figure.getCurrentX(), figure.getCurrentY(), bannedX, bannedY);
-                    if (move.isPossibleMove(figure, board)) {
+                    // Tutaj jest problem ---- Przez to zżera pamięć jak łakocie
+                    if (!move.isMoveThroughFigure(board)) {          // TO .isPossibleMove() TO ZABIERA PAMIĘĆ, chyba jest wyłowywana rekurencyjnie metoda getBannedFields
                         boolean isStoped = false;
                         for (int[] x : color == Color.BLACK ? bannedFieldsBlack : bannedFieldsWhite){
                             if (x[0] == bannedX && x[1] == bannedY){
@@ -197,19 +198,20 @@ public class Game {
                             }
                         }
                     }
+                    // Tutaj jest problem ---- Przez to zżera pamięć jak łakocie
                 }
             }
         }
         // Do   TESTÓWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-        if (color == Color.BLACK) {
-            for (int[] x : bannedFieldsBlack) {
-                System.out.println("BLACK: " + x[0] + "---" + x[1]);
-            }
-        } else {
-            for (int[] x : bannedFieldsWhite) {
-                System.out.println("WHITE: " + x[0] + "---" + x[1]);
-            }
-        }
+//        if (color == Color.BLACK) {
+//            for (int[] x : bannedFieldsBlack) {
+//                System.out.println("BLACK: " + x[0] + "---" + x[1]);
+//            }
+//        } else {
+//            for (int[] x : bannedFieldsWhite) {
+//                System.out.println("WHITE: " + x[0] + "---" + x[1]);
+//            }
+//        }
     }
 
     private boolean isKingHaveLegalMove(Figure king, Board board, Color color){
@@ -236,7 +238,6 @@ public class Game {
         return false;
     }
 
-    // Sprawdzenie kooordynatów króla
     private King lookForKing(Color color){
         for (Figure figure : figureInPlay) {
             if (figure.getClass() == King.class && figure.getColor() == color) {

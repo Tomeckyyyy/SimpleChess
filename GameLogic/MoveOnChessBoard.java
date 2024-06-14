@@ -54,7 +54,7 @@ public class MoveOnChessBoard {
         return false;
     }
 
-    private boolean isMoveThroughFigure(Board board) {
+    public boolean isMoveThroughFigure(Board board) {
         if (board.getPlaceChessBoard(startX, startY).getClass() == Knight.class) {
             return false;
         } else if (startX == destinationX) {
