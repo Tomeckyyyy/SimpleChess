@@ -2,7 +2,6 @@ package GUI;
 
 import GameLogic.Board;
 import GameLogic.Game;
-import GameLogic.MoveOnChessBoard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,25 +14,24 @@ import java.net.URISyntaxException;
 public class SimpleChessGUI extends JFrame {
     protected JButton[][] chessBoardSquares = new JButton[8][8];
     private static final String[] columnNames = {"", "H", "G", "F", "E", "D", "C", "B", "A"};
+    private static final ImageIcon whitePawnIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
+    private static final ImageIcon whiteRookIcon = new ImageIcon("src/GUI/img/white/Rook.png");
+    private static final ImageIcon whiteBishopIcon = new ImageIcon("src/GUI/img/white/Bishop.png");
+    private static final ImageIcon whiteKnightIcon = new ImageIcon("src/GUI/img/white/Knight.png");
+    private static final ImageIcon whiteKingIcon = new ImageIcon("src/GUI/img/white/King.png");
+    private static final ImageIcon whiteQueenIcon = new ImageIcon("src/GUI/img/white/Queen.png");
+    private static final ImageIcon blackPawnIcon = new ImageIcon("src/GUI/img/black/Pawn.png");
+    private static final ImageIcon blackRookIcon = new ImageIcon("src/GUI/img/black/Rook.png");
+    private static final ImageIcon blackBishopIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
+    private static final ImageIcon blackKnightIcon = new ImageIcon("src/GUI/img/black/Knight.png");
+    private static final ImageIcon blackQueenIcon = new ImageIcon("src/GUI/img/black/Queen.png");
+    private static final ImageIcon blackKingIcon = new ImageIcon("src/GUI/img/black/King.png");
 
     public SimpleChessGUI() {
         initializeGUI();
     }
 
     public void gameRefreshGUI(Board board) {
-        ImageIcon whitePawnIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-        ImageIcon whiteRookIcon = new ImageIcon("src/GUI/img/white/Rook.png");
-        ImageIcon whiteBishopIcon = new ImageIcon("src/GUI/img/white/Bishop.png");
-        ImageIcon whiteKnightIcon = new ImageIcon("src/GUI/img/white/Knight.png");
-        ImageIcon whiteKingIcon = new ImageIcon("src/GUI/img/white/King.png");
-        ImageIcon whiteQueenIcon = new ImageIcon("src/GUI/img/white/Queen.png");
-        ImageIcon blackPawnIcon = new ImageIcon("src/GUI/img/black/Pawn.png");
-        ImageIcon blackRookIcon = new ImageIcon("src/GUI/img/black/Rook.png");
-        ImageIcon blackBishopIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-        ImageIcon blackKnightIcon = new ImageIcon("src/GUI/img/black/Knight.png");
-        ImageIcon blackQueenIcon = new ImageIcon("src/GUI/img/black/Queen.png");
-        ImageIcon blackKingIcon = new ImageIcon("src/GUI/img/black/King.png");
-
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 if (board.getPlaceChessBoard(x, y) == null) {
@@ -87,6 +85,41 @@ public class SimpleChessGUI extends JFrame {
             }
         }
     }
+
+    public char showPromotionDialog() {
+        Object[] options = {"Queen", "Rook", "Bishop", "Knight"};
+        int choice = JOptionPane.showOptionDialog(null,
+                "Choose a piece to promote your pawn:",
+                "Pawn Promotion",
+                JOptionPane.DEFAULT_OPTION, // Używamy DEFAULT_OPTION, aby wymusić wybór jednej z opcji
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        while (choice == JOptionPane.CLOSED_OPTION) {
+            JOptionPane.showMessageDialog(null, "Please choose a piece to promote your pawn.");
+            choice = JOptionPane.showOptionDialog(null,
+                    "Choose a piece to promote your pawn:",
+                    "Pawn Promotion",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+        }
+        switch (choice) {
+            case 1:
+                return 'R';
+            case 2:
+                return 'B';
+            case 3:
+                return 'K';
+            default:
+                return 'Q';
+        }
+    }
+
 
     private void initializeGUI() {
         setTitle("Simple Chess");

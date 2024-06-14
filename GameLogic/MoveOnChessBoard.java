@@ -2,8 +2,6 @@ package GameLogic;
 
 import Figures.*;
 
-import java.util.List;
-
 
 public class MoveOnChessBoard {
     private final int startX;
@@ -28,7 +26,7 @@ public class MoveOnChessBoard {
             }
         }
         // Sprawdzanie czy taki ruch istnieje w ruchach potencjalnych, potem sprawdza czy figura przechodzi przez inną;
-        for (MoveFigure potentialMove : figure.getPossibleMove()) {  // problem jest z iteracją po potential movach
+        for (MoveFigure potentialMove : figure.getPossibleMove()) {
             if (startX + potentialMove.getX() == destinationX && startY + potentialMove.getY() == destinationY) {
                 if (potentialMove.isOnlyKill() && board.getPlaceChessBoard(destinationX, destinationY) == null){
                     return false;
@@ -40,6 +38,17 @@ public class MoveOnChessBoard {
                 } else {
                     break;
                 }
+            }
+        }
+        return false;
+    }
+
+    public boolean isPawnPromotion(Figure figure){
+        if (figure.getClass() == Pawn.class) {
+            if (destinationX == 1 && figure.getColor() == Color.BLACK) {
+                return true;
+            } else if (destinationX == 7 && figure.getColor() == Color.WHITE) {
+                return true;
             }
         }
         return false;

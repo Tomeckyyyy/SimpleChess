@@ -12,19 +12,18 @@ public class Game {
     private final BannedFields bannedFieldsBlack = new BannedFields(Color.BLACK);
     private final BannedFields bannedFieldsWhite = new BannedFields(Color.WHITE);
     private final Board board = new Board();
+    private SimpleChessGUI simpleChessGUI;
 
 
     public Game(SimpleChessGUI simpleChessGUI) {
+        this.simpleChessGUI = simpleChessGUI;
 //        setNewBoard();
         setTestPawnChange();
         simpleChessGUI.gameRefreshGUI(board);
-
-        // TODO: Testowanie matowania.
-        // TODO: Zakaz bicia do przodu pionek
-        // TODO: Pionek pole przemiany
-
-
         Color colorOnMove = Color.WHITE;
+        changeFigureInPlay(board);
+        getBannedFields(Color.WHITE);
+        getBannedFields(Color.BLACK);
         while (!isCheckMate(board, Color.WHITE) && !isCheckMate(board, Color.BLACK)) {
             waitForMove(colorOnMove);
             colorOnMove = colorOnMove.next();
@@ -33,6 +32,11 @@ public class Game {
             System.gc();
         }
     }
+
+
+    // TODO: Testowanie matowania.
+    // TODO: Zakaz bicia do przodu pionek
+    // TODO: Pionek pole przemiany
 
     private void setNewBoard(){
         board.setPlaceOnBoard(0, 3, new King(0, 3, Color.WHITE));
@@ -60,7 +64,7 @@ public class Game {
     }
 
     private void setTestPawnChange(){
-        board.setPlaceOnBoard(1, 0, new Pawn(1 , 0,Color.WHITE));
+        board.setPlaceOnBoard(6, 0, new Pawn(6 , 0,Color.WHITE));
         board.setPlaceOnBoard(7, 1, new Pawn(7 , 1,Color.BLACK));
         board.setPlaceOnBoard(7, 3, new King(7, 3, Color.BLACK));
         board.setPlaceOnBoard(6, 5, new King(6, 5, Color.WHITE));
@@ -69,7 +73,7 @@ public class Game {
     private void waitForMove(Color colorOnMove){
         while (!MoveListener.isMoveListenerComplete()) {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -99,20 +103,41 @@ public class Game {
             throw new MoveException("Trying to move a piece that isn't yours");
         }  else if (moveOnChessBoard.isPossibleMove(figure, board)){
             if (figure.getClass() == King.class) {
-                for (int[] bannedCoordinates : color.next() == bannedFieldsBlack.getColor() ? bannedFieldsBlack : bannedFieldsWhite) {
+                for (int[] bannedCoordinates : color.next() == Color.BLACK ? bannedFieldsBlack : bannedFieldsWhite) {
                     if (moveOnChessBoard.getDestinationX() == bannedCoordinates[0] && moveOnChessBoard.getDestinationY() == bannedCoordinates[1]) {
                         throw new MoveException("The king cannot approach the king");
                     }
                 }
             }
-            board.setPlaceOnBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY(), null);
-            board.setPlaceOnBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY(), figure);
-            figure.setCurrentX(moveOnChessBoard.getDestinationX());
-            figure.setCurrentY(moveOnChessBoard.getDestinationY());
-            figure.setMoved(true);
-            changeFigureInPlay(board);
-            getBannedFields(Color.WHITE);
-            getBannedFields(Color.BLACK);
+            if (moveOnChessBoard.isPawnPromotion(figure)){
+                char symbolNewFigure = simpleChessGUI.showPromotionDialog();
+                int x = moveOnChessBoard.getDestinationX();
+                int y = moveOnChessBoard.getDestinationY();
+                switch (symbolNewFigure) {
+                    case 'R':
+                        board.setPlaceOnBoard(x,y, new Rook(x,y,figure.getColor()));
+                        break;
+                    case 'B':
+                        board.setPlaceOnBoard(x,y, new Bishop(x,y,figure.getColor()));
+                        break;
+                    case 'K':
+                        board.setPlaceOnBoard(x,y, new Knight(x,y,figure.getColor()));
+                        break;
+                    default:
+                        board.setPlaceOnBoard(x,y, new Queen(x,y,figure.getColor()));
+                        break;
+                }
+                board.setPlaceOnBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY(), null);
+            } else {
+                board.setPlaceOnBoard(moveOnChessBoard.getStartX(), moveOnChessBoard.getStartY(), null);
+                board.setPlaceOnBoard(moveOnChessBoard.getDestinationX(), moveOnChessBoard.getDestinationY(), figure);
+                figure.setCurrentX(moveOnChessBoard.getDestinationX());
+                figure.setCurrentY(moveOnChessBoard.getDestinationY());
+                figure.setMoved(true);
+                changeFigureInPlay(board);
+                getBannedFields(Color.WHITE);
+                getBannedFields(Color.BLACK);
+            }
         }
         else {
             throw new MoveException("This move is prohibited");
@@ -122,7 +147,7 @@ public class Game {
     // Sprawdza czy jest MAT
     private boolean isCheckMate(Board board, Color color){
         King king = lookForKing(color);
-        for (int[] bannedCoordinates : color == bannedFieldsBlack.getColor() ? bannedFieldsBlack : bannedFieldsWhite) {
+        for (int[] bannedCoordinates : color == Color.BLACK ? bannedFieldsBlack : bannedFieldsWhite) {
             assert king != null;
             if (king.getCurrentX() == bannedCoordinates[0] && king.getCurrentY() == bannedCoordinates[1]){ // Sprawdza czy jest szach
                 SimpleChessGUI.showError("Check");
@@ -141,7 +166,7 @@ public class Game {
     }
 
     private void getBannedFields(Color color){
-        if (color == bannedFieldsBlack.getColor()) {
+        if (color == Color.BLACK) {
             bannedFieldsBlack.clear();
         } else {
             bannedFieldsWhite.clear();
@@ -158,14 +183,14 @@ public class Game {
                     MoveOnChessBoard move = new MoveOnChessBoard(figure.getCurrentX(), figure.getCurrentY(), bannedX, bannedY);
                     if (move.isPossibleMove(figure, board)) {
                         boolean isStoped = false;
-                        for (int[] x : color == bannedFieldsBlack.getColor() ? bannedFieldsBlack : bannedFieldsWhite){
+                        for (int[] x : color == Color.BLACK ? bannedFieldsBlack : bannedFieldsWhite){
                             if (x[0] == bannedX && x[1] == bannedY){
                                 isStoped = true;
                                 break;
                             }
                         }
                         if (!isStoped) {
-                            if (color == bannedFieldsBlack.getColor()) {
+                            if (color == Color.BLACK) {
                                 bannedFieldsBlack.add(new int[]{bannedX, bannedY});
                             } else {
                                 bannedFieldsWhite.add(new int[]{bannedX, bannedY});
@@ -195,7 +220,7 @@ public class Game {
                 continue;
             }
             boolean wasBreak = false;
-            for (int[] bannedField : color == bannedFieldsBlack.getColor() ? bannedFieldsBlack : bannedFieldsWhite){
+            for (int[] bannedField : color == Color.BLACK ? bannedFieldsBlack : bannedFieldsWhite){
                 if (bannedField[0] == potentialMove.getX() && bannedField[1] == potentialMove.getY()){
                     wasBreak = true;
                     break;
