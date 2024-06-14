@@ -1,9 +1,8 @@
 package GameLogic;
 
-import Figures.Figure;
-import Figures.King;
-import Figures.Knight;
-import Figures.MoveFigure;
+import Figures.*;
+
+import java.util.List;
 
 
 public class MoveOnChessBoard {
@@ -29,7 +28,7 @@ public class MoveOnChessBoard {
             }
         }
         // Sprawdzanie czy taki ruch istnieje w ruchach potencjalnych, potem sprawdza czy figura przechodzi przez inną;
-        for (MoveFigure potentialMove : figure.getPossibleMove()) {
+        for (MoveFigure potentialMove : figure.getPossibleMove()) {  // problem jest z iteracją po potential movach
             if (startX + potentialMove.getX() == destinationX && startY + potentialMove.getY() == destinationY) {
                 if (potentialMove.isOnlyKill() && board.getPlaceChessBoard(destinationX, destinationY) == null){
                     return false;

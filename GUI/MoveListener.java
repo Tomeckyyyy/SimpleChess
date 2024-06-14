@@ -1,7 +1,5 @@
 package GUI;
 
-import GameLogic.Game;
-import GameLogic.MoveException;
 import GameLogic.MoveOnChessBoard;
 
 public class MoveListener {
@@ -13,7 +11,7 @@ public class MoveListener {
 
     public static MoveOnChessBoard moveListener() {
         return new MoveOnChessBoard(startX, startY, destinationX, destinationY);
-    }  // TODO: Żeby dodać sprawdzanie czy przypadkiem nulla nie wzieliśmy, rzucanie wyjątkiem MoveException
+    }
 
     public static void getFieldsCoordinatesListener(int x, int y){
         if (!isSecondCoordinates) {
