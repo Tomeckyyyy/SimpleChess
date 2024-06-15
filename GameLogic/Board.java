@@ -20,7 +20,7 @@ public class Board {
             for (int y = 0; y < 8; y++) {
                 consoleBoard.append("|").append((chessBoard[x][y] == null) ? "  " : chessBoard[x][y]);
             }
-            consoleBoard.append("| \n");
+            if (x != 7) consoleBoard.append("| \n");
         }
         return consoleBoard.toString();
     }

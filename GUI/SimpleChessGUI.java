@@ -1,10 +1,11 @@
 package GUI;
 
-import GameLogic.Board;
-import GameLogic.Game;
+import Figures.*;
+import GameLogic.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -13,25 +14,30 @@ import java.net.URISyntaxException;
 
 public class SimpleChessGUI extends JFrame {
     protected JButton[][] chessBoardSquares = new JButton[8][8];
-    private static final String[] columnNames = {"", "H", "G", "F", "E", "D", "C", "B", "A"};
-    private static final ImageIcon whitePawnIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
-    private static final ImageIcon whiteRookIcon = new ImageIcon("src/GUI/img/white/Rook.png");
-    private static final ImageIcon whiteBishopIcon = new ImageIcon("src/GUI/img/white/Bishop.png");
-    private static final ImageIcon whiteKnightIcon = new ImageIcon("src/GUI/img/white/Knight.png");
-    private static final ImageIcon whiteKingIcon = new ImageIcon("src/GUI/img/white/King.png");
-    private static final ImageIcon whiteQueenIcon = new ImageIcon("src/GUI/img/white/Queen.png");
-    private static final ImageIcon blackPawnIcon = new ImageIcon("src/GUI/img/black/Pawn.png");
-    private static final ImageIcon blackRookIcon = new ImageIcon("src/GUI/img/black/Rook.png");
-    private static final ImageIcon blackBishopIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
-    private static final ImageIcon blackKnightIcon = new ImageIcon("src/GUI/img/black/Knight.png");
-    private static final ImageIcon blackQueenIcon = new ImageIcon("src/GUI/img/black/Queen.png");
-    private static final ImageIcon blackKingIcon = new ImageIcon("src/GUI/img/black/King.png");
+    private final String[] columnNames = {"", "H", "G", "F", "E", "D", "C", "B", "A"};
+    private boolean off = false;
+    private final ImageIcon whitePawnIcon = new ImageIcon("src/GUI/img/white/Pawn.png");
+    private final ImageIcon whiteRookIcon = new ImageIcon("src/GUI/img/white/Rook.png");
+    private final ImageIcon whiteBishopIcon = new ImageIcon("src/GUI/img/white/Bishop.png");
+    private final ImageIcon whiteKnightIcon = new ImageIcon("src/GUI/img/white/Knight.png");
+    private final ImageIcon whiteKingIcon = new ImageIcon("src/GUI/img/white/King.png");
+    private final ImageIcon whiteQueenIcon = new ImageIcon("src/GUI/img/white/Queen.png");
+    private final ImageIcon blackPawnIcon = new ImageIcon("src/GUI/img/black/Pawn.png");
+    private final ImageIcon blackRookIcon = new ImageIcon("src/GUI/img/black/Rook.png");
+    private final ImageIcon blackBishopIcon = new ImageIcon("src/GUI/img/black/Bishop.png");
+    private final ImageIcon blackKnightIcon = new ImageIcon("src/GUI/img/black/Knight.png");
+    private final ImageIcon blackQueenIcon = new ImageIcon("src/GUI/img/black/Queen.png");
+    private final ImageIcon blackKingIcon = new ImageIcon("src/GUI/img/black/King.png");
 
     public SimpleChessGUI() {
         initializeGUI();
     }
 
     public void gameRefreshGUI(Board board) {
+        if (off) {
+            SimpleChessGUI.this.dispose();
+            new Game(new SimpleChessGUI());
+        }
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
                 if (board.getPlaceChessBoard(x, y) == null) {
@@ -156,30 +162,65 @@ public class SimpleChessGUI extends JFrame {
         loadGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Load Game from \"Movements\" file");
-                try (BufferedReader br = new BufferedReader(new FileReader("Movements.txt"))) {
-                    while (br.readLine() != null){
-                        String line = br.readLine();
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showOpenDialog(SimpleChessGUI.this) == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+                        Board board = new Board();
+                        int x = 0;
+                        String line;
+                        while ((line=br.readLine())!=null) {
+                            for (int y = 0; y < 8; y++) {
+                                char symbolNewFigure = line.charAt(3 * y + 1);
+                                Figures.Color color = line.charAt(3 * y + 2) == 'w' ? Figures.Color.WHITE : Figures.Color.BLACK;
+                                switch (symbolNewFigure) {
+                                    case 'R':
+                                        board.setPlaceOnBoard(x, y, new Rook(x, y, color));
+                                        break;
+                                    case 'B':
+                                        board.setPlaceOnBoard(x, y, new Bishop(x, y, color));
+                                        break;
+                                    case 'K':
+                                        board.setPlaceOnBoard(x, y, new Knight(x, y, color));
+                                        break;
+                                    case '0':
+                                        board.setPlaceOnBoard(x, y, new King(x, y, color));
+                                        break;
+                                    case 'P':
+                                        board.setPlaceOnBoard(x, y, new Pawn(x, y, color));
+                                        break;
+                                    case 'Q':
+                                        board.setPlaceOnBoard(x, y, new Queen(x, y, color));
+                                        break;
+                                    default:
+                                        board.setPlaceOnBoard(x, y, null);
+                                        break;
+                                }
+                            }
+                            x++;
+                        }
+                        BoardListener.setBoard(board);
+                        off = true;
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
-                } catch (IOException m) {
-                    JOptionPane.showMessageDialog(null, "Nie udało się odczytać pliku");
-                    System.out.println(m);
                 }
             }
         });
+
         saveGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Save Game to \"Movements\" file");
-//                try (BufferedWriter br = new BufferedWriter(new FileWriter("Movements.txt"))) {
-//                    for (MoveOnChessBoard x : ) {
-//                        String line = name + "/" + species + "/" + age + "\n";
-//                        br.write(line);
-//                    }
-//                } catch (IOException m) {
-//                    JOptionPane.showMessageDialog(null, "Nie udało się zapisać do pliku");
-//                    System.out.println(m);
-//                }
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(SimpleChessGUI.this) == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    try (BufferedWriter br = new BufferedWriter(new FileWriter(selectedFile))) {
+                        br.write(BoardListener.getBoard().toString());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Nie udało się zapisać do pliku");
+                        ex.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -187,7 +228,7 @@ public class SimpleChessGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "New Game");
-                new Game(new SimpleChessGUI());
+                off = true;
             }
         });
 
@@ -245,7 +286,11 @@ public class SimpleChessGUI extends JFrame {
         }
     }
 
-    public static void showError(String message){
+    public static void showError(String message) {
         JOptionPane.showMessageDialog(null, message);
+    }
+
+    public boolean getOff(){
+        return off;
     }
 }
