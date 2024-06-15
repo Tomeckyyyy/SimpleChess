@@ -33,7 +33,7 @@ public class MoveOnChessBoard {
                 } else if (potentialMove.isStartPos() && figure.isMoved()) {
                     return false;
                 }
-                if (!this.isMoveThroughFigure(board)) {
+                if (this.getFigureMoveThroughMoveFigure(board) == null) {
                     return true;
                 } else {
                     break;
@@ -54,21 +54,21 @@ public class MoveOnChessBoard {
         return false;
     }
 
-    public boolean isMoveThroughFigure(Board board) {
+    public String getFigureMoveThroughMoveFigure(Board board) {
         if (board.getPlaceChessBoard(startX, startY).getClass() == Knight.class) {
-            return false;
+            return null;
         } else if (startX == destinationX) {
             int step = (destinationY - startY) > 0 ? 1 : -1;
             for (int y = startY + step; y != destinationY; y += step) {
                 if (board.getPlaceChessBoard(startX, y) != null) {
-                    return true;
+                    return board.getPlaceChessBoard(startX, y).toString();
                 }
             }
         } else if (startY == destinationY) {
             int step = (destinationX - startX) > 0 ? 1 : -1;
             for (int x = startX + step; x != destinationX; x += step) {
                 if (board.getPlaceChessBoard(x, startY) != null) {
-                    return true;
+                    return board.getPlaceChessBoard(x, startY).toString();
                 }
             }
         } else if (Math.abs(destinationX - startX) == Math.abs(destinationY - startY)) {
@@ -78,13 +78,13 @@ public class MoveOnChessBoard {
             int y = startY + stepY;
             while (x != destinationX && y != destinationY) {
                 if (board.getPlaceChessBoard(x, y) != null) {
-                    return true;
+                    return board.getPlaceChessBoard(x, y).toString();
                 }
                 x += stepX;
                 y += stepY;
             }
         }
-        return false;
+        return null;
     }
 
     public int getStartX() {
