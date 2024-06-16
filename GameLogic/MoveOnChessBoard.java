@@ -28,12 +28,18 @@ public class MoveOnChessBoard {
         // Sprawdzanie czy taki ruch istnieje w ruchach potencjalnych, potem sprawdza czy figura przechodzi przez inną;
         for (MoveFigure potentialMove : figure.getPossibleMove()) {
             if (startX + potentialMove.getX() == destinationX && startY + potentialMove.getY() == destinationY) {
-                if (potentialMove.isOnlyKill() && board.getPlaceChessBoard(destinationX, destinationY) == null){
-                    return false;
+                if (potentialMove.isOnlyKill()){
+                    if (board.getPlaceChessBoard(destinationX, destinationY) != null) {
+                        return true;
+                    }
+                    continue;
                 } else if (potentialMove.isStartPos() && figure.isMoved()) {
                     return false;
                 }
                 if (this.getFigureMoveThroughMoveFigure(board) == null) {
+                    if (figure.getClass() == Pawn.class && board.getPlaceChessBoard(destinationX, destinationY) != null){
+                        return false;
+                    }
                     return true;
                 } else {
                     break;
